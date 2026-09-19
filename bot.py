@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
@@ -90,7 +91,15 @@ def main():
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     print("बॉट शुरू हो गया है...")
-    app.run_polling()
+    
+    # Render फ्री सर्वर के लिए वेबहुक सेटअप
+    port = int(os.environ.get("PORT", 8080))
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=port,
+        url_path=BOT_TOKEN,
+        webhook_url=f"https://onrender.com{BOT_TOKEN}"
+    )
 
 if __name__ == '__main__':
     main()
